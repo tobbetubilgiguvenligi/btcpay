@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -70,8 +71,8 @@ namespace BTCPayServer.Client
         {
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
-            if (request.Status!= InvoiceStatus.Settled && request.Status!= InvoiceStatus.Invalid)
-                throw new ArgumentOutOfRangeException(nameof(request.Status), "Status can only be Invalid or Complete");
+            if (!new[]{InvoiceStatus.New, InvoiceStatus.Settled, InvoiceStatus.Invalid}.Contains(request.Status))
+                throw new ArgumentOutOfRangeException(nameof(request.Status), "Status can only be New, Invalid or Complete");
             var response = await _httpClient.SendAsync(
                 CreateHttpRequest($"api/v1/stores/{storeId}/invoices/{invoiceId}/status", bodyPayload: request,
                     method: HttpMethod.Post), token);
